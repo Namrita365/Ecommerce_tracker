@@ -1,22 +1,64 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-// src/index.ts
-const express_1 = __importDefault(require("express"));
-const tracker_1 = __importDefault(require("./routes/tracker"));
-const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3000;
-// Middleware
-app.use(express_1.default.json());
-// Routes
-app.use('/api/tracker', tracker_1.default);
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+const PORT = 3001;
+
+app.use(cors());
+app.use(express.json());
+
+// Sample product data
+const products = [
+  {
+    id: 1,
+    make: "Apple",
+    model: "iPhone 15",
+    price: 45000,
+    images: [
+      "https://picsum.photos/500",
+      "https://picsum.photos/600"
+    ],
+    seller: "John Doe",
+    location: "Jones Grove, 2085 Nichole Point Suite 964",
+    phoneNumber: 9876543210
+  },
+  {
+    id: 2,
+    make: "Samsung",
+    model: "Galaxy S23",
+    price: 42000,
+    images: [
+      "https://picsum.photos/510",
+      "https://picsum.photos/610"
+    ],
+    seller: "Jane Smith",
+    location: "Hillview, 3012 River Lane",
+    phoneNumber: 9123456780
+  }
+];
+
 // Root route
 app.get('/', (req, res) => {
-    res.send('Welcome to the E-commerce Tracker API');
+  res.send('Hello from the backend!');
 });
-// Start server
+
+// Get all products
+app.get('/products', (req, res) => {
+  res.json(products);
+});
+
+// Get product by ID
+app.get('/products/:id', (req, res) => {
+  const productId = parseInt(req.params.id);
+  const product = products.find(p => p.id === productId);
+
+  if (product) {
+    res.json(product);
+  } else {
+    res.status(404).json({ error: 'Product not found' });
+  }
+});
+
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`✅ Server is running at http://localhost:${PORT}`);
 });
